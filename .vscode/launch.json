@@ -4,9 +4,32 @@
     {
       "type": "debugpy",
       "request": "launch",
-      "name": "Rect_Test",
+      "name": "Default",
       "program": "${workspaceFolder}/python/rectangle/rectangleDriver.py",
       "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Help",
+      "program": "${workspaceFolder}/python/rectangle/rectangleDriver.py",
+      "cwd": "${workspaceFolder}",
+      "args":
+      [
+        "--help"
+      ]
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Height",
+      "program": "${workspaceFolder}/python/rectangle/rectangleDriver.py",
+      "cwd": "${workspaceFolder}",
+      "args":
+      [
+        "--height", "3",
+        "--width", "5"
+      ]
     }
   ]
 }
