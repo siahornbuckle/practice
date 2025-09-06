@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Rect_Test",
+      "program": "${workspaceFolder}/python/rectangle/rectangleDriver.py",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
