@@ -69,7 +69,10 @@ class AsciiRectangle:
             none
         """
         out_str: str = f'|{' ' * self.width_}|\n'
-        print(out_str * self.height_)
+        print(out_str * self.height_, end="")
+
+        #for i in range(self.height_):
+        #    print(out_str)
         return
 
     
