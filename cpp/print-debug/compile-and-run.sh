@@ -6,11 +6,11 @@
 # *   ___) | | | / ___ \
 # *  |____/ |___/_/   \_\
 # *
-# *  File:        <filename>.c
+# *  File:        compile-andrun.sh
 # *  Author:      SIA
 # *  Description: <brief description of the file>
 # *  Created:     <date>
 # **********************************************************************
 
-g++ test-print.cpp -o out
+g++ -w test-print.cpp -o out
 ./out
