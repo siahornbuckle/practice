@@ -1,0 +1,131 @@
+########################################################################
+#    ____   ___    _
+#   / ___| |_ _|  / \
+#   \___ \  | |  / _ \
+#    ___) | | | / ___ \
+#   |____/ |___/_/   \_\
+#
+#   File:        parser.py
+#   Author:      SIA
+#   Description: <brief description of the file>
+#   Created:     <date>
+########################################################################
+
+import pandas as pd
+import pdfplumber
+import re
+from openpyxl import Workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+
+# ---------------------------------------------------
+# CONFIGURATION
+# ---------------------------------------------------
+
+# Path to your bank statement PDF
+PDF_FILE = "bank_statement.pdf"
+
+# Output Excel file
+OUTPUT_FILE = "bank_transactions.xlsx"
+
+# ---------------------------------------------------
+# FUNCTION: Extract text from PDF
+# ---------------------------------------------------
+
+def extract_text_from_pdf(pdf_path):
+    full_text = ""
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text()
+            if text:
+                full_text += text + "\n"
+
+    return full_text
+
+
+# ---------------------------------------------------
+# FUNCTION: Parse transactions
+# ---------------------------------------------------
+
+def parse_transactions(text):
+    """
+    Adjust the regex below depending on your bank format.
+
+    Expected example format:
+    01/15/2026 AMAZON PURCHASE -45.67
+    """
+
+    transactions = []
+
+    # Regex pattern:
+    # Date | Description | Amount
+    pattern = re.compile(
+        r'(\d{2}/\d{2}/\d{4})\s+(.+?)\s+(-?\$?\d+\.\d{2})'
+    )
+
+    matches = pattern.findall(text)
+
+    for match in matches:
+        date, description, amount = match
+
+        # Clean amount
+        amount = amount.replace("$", "").replace(",", "")
+
+        transactions.append({
+            "Date": date,
+            "Description": description.strip(),
+            "Amount": float(amount)
+        })
+
+    return pd.DataFrame(transactions)
+
+
+# ---------------------------------------------------
+# FUNCTION: Save to Excel
+# ---------------------------------------------------
+
+def save_to_excel(df, output_file):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Transactions"
+
+    # Add dataframe rows
+    for row in dataframe_to_rows(df, index=False, header=True):
+        ws.append(row)
+
+    # Auto-size columns
+    for column_cells in ws.columns:
+        length = max(len(str(cell.value)) if cell.value else 0 for cell in column_cells)
+        ws.column_dimensions[column_cells[0].column_letter].width = length + 5
+
+    wb.save(output_file)
+
+# ---------------------------------------------------
+# MAIN
+# ---------------------------------------------------
+
+def main():
+
+    print("Reading PDF statement...")
+
+    text = extract_text_from_pdf(PDF_FILE)
+
+    print("Parsing transactions...")
+
+    df = parse_transactions(text)
+
+    if df.empty:
+        print("No transactions found.")
+        return
+
+    print(df)
+
+    print(f"\nSaving to Excel: {OUTPUT_FILE}")
+
+    save_to_excel(df, OUTPUT_FILE)
+
+    print("Done!")
+
+
+if __name__ == "__main__":
+    main()
