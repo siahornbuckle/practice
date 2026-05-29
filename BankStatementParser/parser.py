@@ -40,6 +40,10 @@ def extract_text_from_pdf(pdf_path):
             if text:
                 full_text += text + "\n"
 
+    # pdf to a text file
+    with open("file.txt", "w", encoding="utf-8") as f:
+        f.write(full_text)
+
     return full_text
 
 
@@ -52,7 +56,7 @@ def parse_transactions(text):
     Adjust the regex below depending on your bank format.
 
     Expected example format:
-    01/15/2026 AMAZON PURCHASE -45.67
+    Jan 01
     """
 
     transactions = []
@@ -60,22 +64,13 @@ def parse_transactions(text):
     # Regex pattern:
     # Date | Description | Amount
     pattern = re.compile(
-        r'(\d{2}/\d{2}/\d{4})\s+(.+?)\s+(-?\$?\d+\.\d{2})'
+         r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{2})'
     )
 
     matches = pattern.findall(text)
 
     for match in matches:
-        date, description, amount = match
-
-        # Clean amount
-        amount = amount.replace("$", "").replace(",", "")
-
-        transactions.append({
-            "Date": date,
-            "Description": description.strip(),
-            "Amount": float(amount)
-        })
+        transactions.append(match)
 
     return pd.DataFrame(transactions)
 
