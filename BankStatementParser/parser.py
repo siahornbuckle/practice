@@ -57,18 +57,19 @@ def parse_transactions(text):
 
     Expected example format:
     Jan 30 Electronic Deposit From Pizza Hut $ 400.00
+    Feb 5 Ext Tfr Deposit TRN #= 3C56466A6839113 170.00-
     """
 
     transactions = []
 
     # Regex pattern:
-    # Month | Day | Description | amount
+    # Month | Day | Description | amount and optional -
     pattern = re.compile(
         r'(?P<month>[A-Za-z]{3})\s+'
         r'(?P<day>\d{1,2})\s+'
         r'(?P<description>.*)'
         r'\s+\$?\s*'
-        r'(?P<amount>-?\d+\.\d{2})'
+        r'(?P<amount>-?\d+\.\d{2}-?)'
     )
 
     matches = pattern.findall(text)
@@ -116,8 +117,6 @@ def main():
     if df.empty:
         print("No transactions found.")
         return
-
-    print(df)
 
     print(f"\nSaving to Excel: {OUTPUT_FILE}")
 
