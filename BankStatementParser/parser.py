@@ -60,10 +60,15 @@ def parse_transactions(text):
     Jan 30 Electronic Deposit From Pizza Hut $ 400.00
     Feb 5 Ext Tfr Deposit TRN #= 3C56466A6839113 170.00-
 
-    Chase Bank
+    Chase Bank:
     01/22 Dept Education Student Ln 6Rk0Avphcs1 Web ID: 099008
     -281.72 52.12
     01/30 Pizza Hut Dir Dep PPD ID: 98989 1,908.39 1,960.51
+
+    Marcus Bank:
+    04/10/2026 ACH Deposit pizza hut $150.00 $4,695.64
+    04/15/2026 ACH Withdrawal stuff $620.00 $4,225.64
+
     """
 
     transactions = []
@@ -78,13 +83,22 @@ def parse_transactions(text):
     #     r'(?P<amount>-?\d+\.\d{2}-?)'
     # )
 
-    # Regex pattern: Chase Bank
-    # Month | Description | Amount | Balance
+    # # Regex pattern: Chase Bank
+    # # Month | Description | Amount | Balance
+    # pattern = re.compile(
+    #     r'(?P<date>\d{2}/\d{2})\s+'
+    #     r'(?P<description>.*?)\s+'
+    #     r'(?P<amount>-?\d+(?:,\d{3})*\.\d{2})\s+'
+    #     r'(?P<balance>\d+(?:,\d{3})*\.\d{2})'
+    # )
+
+    # Regex pattern: Marcus Bank
+    # Month | Description | Credits/Debts | Balance
     pattern = re.compile(
-        r'(?P<date>\d{2}/\d{2})\s+'
+        r'(?P<date>\d{2}/\d{2}/\d{4})\s+'
         r'(?P<description>.*?)\s+'
-        r'(?P<amount>-?\d+(?:,\d{3})*\.\d{2})\s+'
-        r'(?P<balance>\d+(?:,\d{3})*\.\d{2})'
+        r'(?P<amount>\$\d+(?:,\d{3})*\.\d{2})\s+'
+        r'(?P<balance>\$\d+(?:,\d{3})*\.\d{2})'
     )
 
     matches = pattern.findall(text)
