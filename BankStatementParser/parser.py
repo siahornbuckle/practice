@@ -56,15 +56,19 @@ def parse_transactions(text):
     Adjust the regex below depending on your bank format.
 
     Expected example format:
-    Jan 01
+    Jan 30 Electronic Deposit From Pizza Hut $ 400.00
     """
 
     transactions = []
 
     # Regex pattern:
-    # Date | Description | Amount
+    # Month | Day | Description | amount
     pattern = re.compile(
-         r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{2})'
+        r'(?P<month>[A-Za-z]{3})\s+'
+        r'(?P<day>\d{1,2})\s+'
+        r'(?P<description>.*)'
+        r'\s+\$?\s*'
+        r'(?P<amount>-?\d+\.\d{2})'
     )
 
     matches = pattern.findall(text)
