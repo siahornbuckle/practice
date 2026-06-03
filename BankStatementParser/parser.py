@@ -16,6 +16,7 @@ import pdfplumber
 import re
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+from enum import Enum
 
 # ---------------------------------------------------
 # CONFIGURATION
@@ -26,6 +27,14 @@ PDF_FILE = "bank_statement.pdf"
 
 # Output Excel file
 OUTPUT_FILE = "bank_transactions.xlsx"
+
+# ---------------------------------------------------
+# CLASS: Enum to hold user input for Bank
+# ---------------------------------------------------
+class Bank(Enum):
+    US      = 1
+    CHASE   = 2
+    MARCUS  = 3
 
 # ---------------------------------------------------
 # FUNCTION: Extract text from PDF
@@ -51,7 +60,7 @@ def extract_text_from_pdf(pdf_path):
 # FUNCTION: Parse transactions
 # ---------------------------------------------------
 
-def parse_transactions(text):
+def parse_transactions(text, pattern_selection):
     """
     Adjust the regex below depending on your bank format.
 
@@ -73,33 +82,32 @@ def parse_transactions(text):
 
     transactions = []
 
-    # # Regex pattern: US Bank
-    # # Month | Day | Description | amount and optional -
-    # pattern = re.compile(
-    #     r'(?P<month>[A-Za-z]{3})\s+'
-    #     r'(?P<day>\d{1,2})\s+'
-    #     r'(?P<description>.*)'
-    #     r'\s+\$?\s*'
-    #     r'(?P<amount>-?\d+\.\d{2}-?)'
-    # )
-
-    # # Regex pattern: Chase Bank
-    # # Month | Description | Amount | Balance
-    # pattern = re.compile(
-    #     r'(?P<date>\d{2}/\d{2})\s+'
-    #     r'(?P<description>.*?)\s+'
-    #     r'(?P<amount>-?\d+(?:,\d{3})*\.\d{2})\s+'
-    #     r'(?P<balance>\d+(?:,\d{3})*\.\d{2})'
-    # )
-
-    # Regex pattern: Marcus Bank
-    # Month | Description | Credits/Debts | Balance
-    pattern = re.compile(
-        r'(?P<date>\d{2}/\d{2}/\d{4})\s+'
-        r'(?P<description>.*?)\s+'
-        r'(?P<amount>\$\d+(?:,\d{3})*\.\d{2})\s+'
-        r'(?P<balance>\$\d+(?:,\d{3})*\.\d{2})'
-    )
+    match pattern_selection:
+        case 1: # Regex pattern: US Bank
+            # Month | Day | Description | amount and optional -
+            pattern = re.compile(
+                r'(?P<month>[A-Za-z]{3})\s+'
+                r'(?P<day>\d{1,2})\s+'
+                r'(?P<description>.*)'
+                r'\s+\$?\s*'
+                r'(?P<amount>-?\d+\.\d{2}-?)'
+            )
+        case 2: # Regex pattern: Chase Bank
+            # Month | Description | Amount | Balance
+            pattern = re.compile(
+                r'(?P<date>\d{2}/\d{2})\s+'
+                r'(?P<description>.*?)\s+'
+                r'(?P<amount>-?\d+(?:,\d{3})*\.\d{2})\s+'
+                r'(?P<balance>\d+(?:,\d{3})*\.\d{2})'
+            )
+        case 3: # Regex pattern: Marcus Bank
+            # Month | Description | Credits/Debts | Balance
+            pattern = re.compile(
+                r'(?P<date>\d{2}/\d{2}/\d{4})\s+'
+                r'(?P<description>.*?)\s+'
+                r'(?P<amount>\$\d+(?:,\d{3})*\.\d{2})\s+'
+                r'(?P<balance>\$\d+(?:,\d{3})*\.\d{2})'
+            )
 
     matches = pattern.findall(text)
 
@@ -130,10 +138,46 @@ def save_to_excel(df, output_file):
     wb.save(output_file)
 
 # ---------------------------------------------------
+# FUNCTION: Select Bank
+# ---------------------------------------------------
+def select_bank(bank_selection):
+    # Match the day to predefined patterns
+    match bank_selection:
+        case 1: # US Bank
+            print("Bank Selected: ", Bank.US.name)
+            # New Line
+            print()
+        case 2: # Chase Bank
+            print("Bank Selected: ", Bank.CHASE.name)
+            # New Line
+            print()
+        case 3: # Marcus Bank
+            print("Bank Selected: ", Bank.MARCUS.name)
+            # New Line
+            print()
+        case _: # Defatult
+            print("That's not a valid bank Selection")
+
+# ---------------------------------------------------
 # MAIN
 # ---------------------------------------------------
 
 def main():
+
+    # Capture text from the user
+    print("Please Enter the number that corresponds to the bank statement")
+    # New Line
+    print()
+
+    print("US Bank ........ 1")
+    print("Chase Bank ..... 2")
+    print("Marcus Bank .... 3")
+
+    # New Line
+    print()
+
+    bank_selection = int(input("Enter bank selection: "))
+    select_bank(bank_selection)
 
     print("Reading PDF statement...")
 
@@ -141,7 +185,7 @@ def main():
 
     print("Parsing transactions...")
 
-    df = parse_transactions(text)
+    df = parse_transactions(text, bank_selection)
 
     print (df)
 
