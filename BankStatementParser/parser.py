@@ -7,15 +7,24 @@
 #
 #   File:        parser.py
 #   Author:      SIA
-#   Description: <brief description of the file>
-#   Created:     <date>
+#   Description: This file will read in data from a PDF
+#                parse the data and export the data into
+#                an excel file or a google sheet. This file
+#                takes 2 inputs from the user (Bank and file type).
 ########################################################################
 
 import pandas as pd
 import pdfplumber
 import re
+
+# Excel
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+
+# Google Sheets
+import gspread
+from google.oauth2.service_account import Credentials
+
 from enum import Enum
 
 # ---------------------------------------------------
@@ -26,7 +35,10 @@ from enum import Enum
 PDF_FILE = "bank_statement.pdf"
 
 # Output Excel file
-OUTPUT_FILE = "bank_transactions.xlsx"
+OUTPUT_FILE_EXCEL = "bank_transactions.xlsx"
+
+# Output Google Sheets
+OUTPUT_FILE_GOOGLE = "Bank Transactions"
 
 # ---------------------------------------------------
 # CLASS: Enum to hold user input for Bank
@@ -138,6 +150,36 @@ def save_to_excel(df, output_file):
     wb.save(output_file)
 
 # ---------------------------------------------------
+# FUNCTION: Save to Google Sheets
+# ---------------------------------------------------
+
+def save_to_google_sheet(df, sheet_name):
+
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    creds = Credentials.from_service_account_file(
+        "credentials.json",
+        scopes=scopes
+    )
+
+    client = gspread.authorize(creds)
+
+    sheet = client.open(sheet_name)
+
+    worksheet = sheet.sheet1
+
+    worksheet.clear()
+
+    data = [df.columns.tolist()] + df.values.tolist()
+
+    worksheet.update(data)
+
+    print(f"Data written to Google Sheet: {sheet_name}")
+
+# ---------------------------------------------------
 # FUNCTION: Select Bank
 # ---------------------------------------------------
 def select_bank(bank_selection):
@@ -163,6 +205,18 @@ def select_bank(bank_selection):
 # ---------------------------------------------------
 
 def main():
+
+    # Capture text from the user
+    print("What type of file you like")
+    # New Line
+    print()
+
+    print("Excel ............ 1")
+    print("Google Sheet ..... 2")
+
+    # New Line
+    print()
+    filetype_selection = int(input("Enter file type: "))
 
     # Capture text from the user
     print("Please Enter the number that corresponds to the bank statement")
@@ -193,9 +247,18 @@ def main():
         print("No transactions found.")
         return
 
-    print(f"\nSaving to Excel: {OUTPUT_FILE}")
+    if filetype_selection:
 
-    save_to_excel(df, OUTPUT_FILE)
+        print(f"\nSaving to Excel: {OUTPUT_FILE_EXCEL}")
+
+        save_to_excel(df, OUTPUT_FILE_EXCEL)
+    else:
+
+        print("\nSaving to Google Sheets...")
+
+        save_to_google_sheet(
+        df,
+        OUTPUT_FILE_GOOGLE)
 
     print("Done!")
 
