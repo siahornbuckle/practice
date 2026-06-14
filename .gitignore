@@ -1,7 +1,11 @@
+# Ignore a specific folder (end with a slash)
+test/
+
 # Ignore all files ending with a specific extension
 *.json
 *.xlsx
 *.txt
+*.pdf
 
 **/__pycache__/
 *.pyc
