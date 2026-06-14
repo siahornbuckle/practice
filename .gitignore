@@ -1,0 +1,9 @@
+# Ignore all files ending with a specific extension
+*.json
+*.xlsx
+*.txt
+
+**/__pycache__/
+*.pyc
+
+
