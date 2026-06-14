@@ -1,0 +1,10 @@
+Go to the Google Cloud Console
+Create a project
+Enable:
+    Google Sheets API
+    Google Drive API
+Create a Service Account
+Download the JSON credentials file
+Save JSON file in same folder as code
+Create a Google Sheet manually
+Share Sheet with Service Account
