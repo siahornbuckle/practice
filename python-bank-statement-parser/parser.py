@@ -24,6 +24,7 @@ from bank_selection                     import select_bank
 from pdf_reader                         import extract_text_from_pdf
 from outputs.output_excel               import save_to_excel
 from outputs.output_google_sheet        import save_to_google_sheet
+from outputs.output_path_operations     import save_pdf_path
 
 
 # ---------------------------------------------------
@@ -31,7 +32,7 @@ from outputs.output_google_sheet        import save_to_google_sheet
 # ---------------------------------------------------
 
 # Path to your bank statement PDF
-PDF_FILE = "bank_statement.pdf"
+PDF_FILE = save_pdf_path()
 
 # Output Excel file
 OUTPUT_FILE_EXCEL = "bank_transactions.xlsx"
