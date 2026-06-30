@@ -247,7 +247,7 @@ def main():
         print("No transactions found.")
         return
 
-    if filetype_selection:
+    if filetype_selection == 1:
 
         print(f"\nSaving to Excel: {OUTPUT_FILE_EXCEL}")
 
