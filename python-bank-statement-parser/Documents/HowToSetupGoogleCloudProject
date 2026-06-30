@@ -5,6 +5,6 @@ Enable:
     Google Drive API
 Create a Service Account
 Download the JSON credentials file
-Save JSON file in the python-bank-statement-parser
+Save JSON file in the python-bank-statement-parser folder
 Create a Google Sheet manually
 Share Sheet with Service Account
